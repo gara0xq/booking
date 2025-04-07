@@ -120,7 +120,7 @@ class HomeScreen extends StatelessWidget {
               color: black,
               alignment: Alignment.center,
               child: Container(
-                width: width - 60,
+                width: width >= 800 ? width - 60 : width - 30,
                 constraints: BoxConstraints(maxWidth: 1200),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,7 +161,7 @@ class HomeScreen extends StatelessWidget {
                   margin: EdgeInsets.only(top: 30),
                   alignment: Alignment.center,
                   child: Container(
-                    width: width - 60,
+                    width: width >= 800 ? width - 60 : width - 30,
                     alignment: Alignment.centerLeft,
                     height: width >= 800 ? 60 : 240,
                     constraints: BoxConstraints(maxWidth: 1200),
@@ -257,22 +257,27 @@ class HomeScreen extends StatelessWidget {
                 Center(
                   child: Container(
                     margin: EdgeInsets.only(top: width >= 800 ? 120 : 280),
-                    width: width - 60,
+                    width: width >= 800 ? width - 60 : width,
                     constraints: BoxConstraints(maxWidth: 1200),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 12,
                       children: [
-                        Text(
-                          "Most Viewed",
-                          style: TextStyle(
-                            color: black,
-                            fontSize: width >= 800 ? 32 : 28,
-                            fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: width >= 800
+                              ? EdgeInsets.zero
+                              : EdgeInsets.symmetric(horizontal: 15),
+                          child: Text(
+                            "Most Viewed",
+                            style: TextStyle(
+                              color: black,
+                              fontSize: width >= 800 ? 32 : 28,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         SizedBox(
-                          height: width >= 800 ? 500 : 400,
+                          height: width >= 800 ? 500 : 300,
                           child: width >= 800
                               ? Row(
                                   spacing: 10,
