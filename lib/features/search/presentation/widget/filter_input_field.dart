@@ -36,8 +36,8 @@ class FilterInputField extends StatelessWidget {
                 barrierColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
                 bodyBuilder: (context) => Container(
-                  height: inputType == InputType.calender ? 430 : 220,
-                  width: 430,
+                  height: inputType == InputType.calender ? 420 : 220,
+                  width: 300,
                   color: primary,
                   padding: EdgeInsets.all(3),
                   child: Container(
