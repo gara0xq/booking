@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:main_app/features/search/presentation/widget/filter_input_field.dart';
 import '../../../../core/utils/colors.dart';
@@ -152,28 +153,25 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Container(
                   width: double.infinity,
-                  height: 60,
+                  height: width >= 800 ? 60 : 150,
                   color: black,
                 ),
-                Center(
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(top: 30),
+                  alignment: Alignment.center,
                   child: Container(
-                    margin: EdgeInsets.only(top: 30),
-                    // color: Colors.red,
                     width: width - 60,
                     alignment: Alignment.centerLeft,
-                    height: 270,
+                    height: width >= 800 ? 60 : 240,
                     constraints: BoxConstraints(maxWidth: 1200),
-                    child: Column(
-                      spacing: 10,
-                      children: [
-                        Container(
-                          height: 60,
-                          padding: EdgeInsets.all(7),
-                          decoration: BoxDecoration(
-                            color: primary,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
+                    padding: EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: width >= 800
+                        ? Row(
                             spacing: 7,
                             children: [
                               Expanded(
@@ -184,30 +182,8 @@ class HomeScreen extends StatelessWidget {
                               ),
                               Expanded(
                                 flex: 3,
-                                child: Container(
-                                  padding: EdgeInsets.only(left: 7),
-                                  decoration: BoxDecoration(
-                                    color: white,
-                                    borderRadius: BorderRadius.circular(7),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: TextFormField(
-                                    style:
-                                        TextStyle(color: black, fontSize: 14),
-                                    decoration: InputDecoration(
-                                      hintText: "Check in",
-                                      hintStyle: TextStyle(
-                                        color: black.withAlpha(122),
-                                        fontSize: 12,
-                                      ),
-                                      icon: Icon(
-                                        Icons.calendar_month,
-                                        color: black,
-                                        size: 30,
-                                      ),
-                                      border: InputBorder.none,
-                                    ),
-                                  ),
+                                child: FilterInputField(
+                                  inputType: InputType.calender,
                                 ),
                               ),
                               Expanded(
@@ -236,70 +212,69 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ],
-                          ),
-                        ),
-                        if (filter)
-                          Row(
+                          )
+                        : Column(
+                            spacing: 7,
                             children: [
                               Expanded(
-                                flex: 3,
-                                child: Container(
-                                  color: Colors.green,
-                                  height: 170,
+                                child: FilterInputField(
+                                  suggestions: [],
                                 ),
                               ),
                               Expanded(
-                                flex: 3,
-                                child: Container(
-                                  color: Colors.green,
-                                  height: 170,
+                                child: FilterInputField(
+                                  inputType: InputType.calender,
                                 ),
                               ),
                               Expanded(
-                                flex: 3,
-                                child: Container(
-                                  color: Colors.green,
-                                  height: 170,
+                                child: FilterInputField(
+                                  inputType: InputType.persons,
                                 ),
                               ),
-                              Spacer(
-                                flex: 2,
-                              )
+                              Expanded(
+                                child: InkWell(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: black,
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    child: Text(
+                                      "Search",
+                                      style: TextStyle(
+                                        color: white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
-                          )
-                      ],
-                    ),
+                          ),
                   ),
                 ),
                 Center(
                   child: Container(
-                    margin: EdgeInsets.only(top: 120),
+                    margin: EdgeInsets.only(top: width >= 800 ? 120 : 280),
                     width: width - 60,
                     constraints: BoxConstraints(maxWidth: 1200),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 20,
+                      spacing: 12,
                       children: [
                         Text(
                           "Most Viewed",
                           style: TextStyle(
                             color: black,
-                            fontSize: 32,
+                            fontSize: width >= 800 ? 32 : 28,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         SizedBox(
-                          height: 500,
-                          child: Row(
-                            spacing: 10,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  color: Colors.grey.shade400,
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
+                          height: width >= 800 ? 500 : 400,
+                          child: width >= 800
+                              ? Row(
                                   spacing: 10,
                                   children: [
                                     Expanded(
@@ -308,7 +283,7 @@ class HomeScreen extends StatelessWidget {
                                       ),
                                     ),
                                     Expanded(
-                                      child: Row(
+                                      child: Column(
                                         spacing: 10,
                                         children: [
                                           Expanded(
@@ -317,18 +292,41 @@ class HomeScreen extends StatelessWidget {
                                             ),
                                           ),
                                           Expanded(
-                                            child: Container(
-                                              color: Colors.grey.shade400,
+                                            child: Row(
+                                              spacing: 10,
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    color: Colors.grey.shade400,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    color: Colors.grey.shade400,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
                                   ],
+                                )
+                              : CarouselSlider.builder(
+                                  options: CarouselOptions(
+                                    autoPlay: true,
+                                    height: double.infinity,
+                                  ),
+                                  itemCount: 3,
+                                  itemBuilder: (_, i, __) => Container(
+                                    height: double.infinity,
+                                    width: double.infinity,
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    color: Colors.grey.shade400,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
                         ),
                       ],
                     ),

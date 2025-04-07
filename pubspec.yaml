@@ -36,9 +36,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   get: ^4.7.2
   auto_size_text: ^3.0.0
-  searchfield: ^1.2.6
+
   standard_searchbar: ^2.1.1
   popover: ^0.3.1
+ 
+  calendar_date_picker2: ^2.0.0
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
