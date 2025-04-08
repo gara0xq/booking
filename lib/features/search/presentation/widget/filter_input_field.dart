@@ -32,6 +32,7 @@ class FilterInputField extends StatelessWidget {
               showPopover(
                 context: context,
                 transition: PopoverTransition.other,
+                direction: PopoverDirection.bottom,
                 shadow: [],
                 barrierColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
@@ -120,13 +121,13 @@ class FilterInputField extends StatelessWidget {
                   ),
                 ),
                 onPop: () => log('Popover was popped!'),
-                direction: PopoverDirection.bottom,
+                // direction: PopoverDirection.right,
                 arrowHeight: 10,
                 arrowWidth: 20,
               );
             },
             child: Container(
-              height: 200,
+              height: 100,
               padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(7),
