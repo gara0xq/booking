@@ -1,10 +1,17 @@
-import 'dart:developer';
-
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
+
+//getx
+import 'package:get/get.dart';
+
+//ui packages
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:popover/popover.dart';
 import 'package:standard_searchbar/old/standard_searchbar.dart';
+
+//files
 import '../../../../core/utils/colors.dart';
+import '../../domain/entity/filter_entity.dart';
+import 'counter_feild.dart';
 
 enum InputType {
   search,
@@ -12,19 +19,35 @@ enum InputType {
   persons,
 }
 
-class FilterInputField extends StatelessWidget {
+class FilterInputField extends StatefulWidget {
+  void Function(int adults, int children, int rooms)? setPersonsChange;
+  void Function(List<DateTime> dates)? setCheckInOutDate;
+  dynamic Function(String)? setQuery;
   final InputType inputType;
   final List<String>? suggestions;
-  const FilterInputField(
-      {super.key, this.inputType = InputType.search, this.suggestions});
+  final FilterEntity filteration;
+  FilterInputField({
+    super.key,
+    this.inputType = InputType.search,
+    this.suggestions,
+    this.setPersonsChange,
+    this.setCheckInOutDate,
+    this.setQuery,
+    required this.filteration,
+  });
+
+  @override
+  State<FilterInputField> createState() => _FilterInputFieldState();
+}
+
+class _FilterInputFieldState extends State<FilterInputField> {
   @override
   Widget build(BuildContext context) {
-    return inputType == InputType.search
+    return widget.inputType == InputType.search
         ? StandardSearchBar(
-            suggestions: suggestions,
+            suggestions: widget.suggestions,
             borderRadius: 7,
-            suggestionsBoxHeight:
-                suggestions!.length > 3 ? 180 : suggestions!.length * 60,
+            onChanged: (e) => widget.setQuery!(e),
             startIconColor: black,
           )
         : InkWell(
@@ -37,8 +60,8 @@ class FilterInputField extends StatelessWidget {
                 barrierColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
                 bodyBuilder: (context) => Container(
-                  height: inputType == InputType.calender ? 420 : 220,
-                  width: 300,
+                  height: widget.inputType == InputType.calender ? null : 220,
+                  width: 340,
                   color: primary,
                   padding: EdgeInsets.all(3),
                   child: Container(
@@ -47,56 +70,58 @@ class FilterInputField extends StatelessWidget {
                       color: white,
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: inputType == InputType.calender
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CalendarDatePicker2(
-                                config: CalendarDatePicker2Config(
-                                  selectedRangeHighlightColor:
-                                      secondary.withAlpha(60),
-                                  selectedDayHighlightColor: secondary,
-                                  calendarType: CalendarDatePicker2Type.range,
-                                  firstDate: DateTime.now(),
-                                ),
-                                value: [],
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  log("Done");
-                                },
-                                child: Container(
-                                  height: 40,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    border:
-                                        Border.all(width: 2, color: primary),
-                                    borderRadius: BorderRadius.circular(7),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Done",
-                                      style: TextStyle(
-                                        color: black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                    child: widget.inputType == InputType.calender
+                        ? CalendarDatePicker2(
+                            config: CalendarDatePicker2Config(
+                              selectedRangeHighlightColor:
+                                  secondary.withAlpha(60),
+                              selectedDayHighlightColor: secondary,
+                              calendarType: CalendarDatePicker2Type.range,
+                              firstDate: DateTime.now(),
+                            ),
+                            onValueChanged: (value) =>
+                                widget.setCheckInOutDate!(value),
+                            value: [],
                           )
                         : Column(
                             spacing: 5,
                             children: [
-                              _counter(name: "Adults", count: 1),
-                              _counter(name: "Children", count: 1),
-                              _counter(name: "Rooms", count: 1),
+                              Counter(
+                                name: "Adults",
+                                count: widget.filteration.noOfAdults,
+                                onChange: (value) => setState(
+                                  () => widget.setPersonsChange!(
+                                    value,
+                                    widget.filteration.noOfChildren,
+                                    widget.filteration.noOfRooms,
+                                  ),
+                                ),
+                              ),
+                              Counter(
+                                name: "Children",
+                                count: widget.filteration.noOfChildren,
+                                onChange: (value) => setState(
+                                  () => widget.setPersonsChange!(
+                                    widget.filteration.noOfAdults,
+                                    value,
+                                    widget.filteration.noOfRooms,
+                                  ),
+                                ),
+                              ),
+                              Counter(
+                                name: "Rooms",
+                                count: widget.filteration.noOfRooms,
+                                onChange: (value) => setState(
+                                  () => widget.setPersonsChange!(
+                                    widget.filteration.noOfAdults,
+                                    widget.filteration.noOfChildren,
+                                    value,
+                                  ),
+                                ),
+                              ),
                               Spacer(),
                               InkWell(
-                                onTap: () {
-                                  log("Done");
-                                },
+                                onTap: () => Get.back(),
                                 child: Container(
                                   height: 40,
                                   width: double.infinity,
@@ -120,8 +145,6 @@ class FilterInputField extends StatelessWidget {
                           ),
                   ),
                 ),
-                onPop: () => log('Popover was popped!'),
-                // direction: PopoverDirection.right,
                 arrowHeight: 10,
                 arrowWidth: 20,
               );
@@ -134,17 +157,19 @@ class FilterInputField extends StatelessWidget {
                 color: white,
               ),
               child: Row(
+                spacing: 13,
                 children: [
                   Icon(
-                      inputType == InputType.calender
+                      widget.inputType == InputType.calender
                           ? Icons.calendar_month
                           : Icons.person,
                       color: black),
-                  Spacer(),
                   Text(
-                    inputType == InputType.calender
-                        ? "Check in | Check out"
-                        : "Adult 2 | Children 0",
+                    widget.inputType == InputType.calender
+                        ? widget.filteration.checkInDate == null
+                            ? "Check in | Check out"
+                            : "${widget.filteration.checkInDate?.day}-${widget.filteration.checkInDate?.month}   |   ${widget.filteration.checkOutDate?.day}-${widget.filteration.checkOutDate?.month}"
+                        : "Adult ${widget.filteration.noOfAdults} | Children ${widget.filteration.noOfChildren}",
                     style: TextStyle(
                       color: black.withAlpha(122),
                       fontSize: 14,
@@ -156,58 +181,4 @@ class FilterInputField extends StatelessWidget {
             ),
           );
   }
-}
-
-Widget _counter(
-    {required String name,
-    void Function()? onAdd,
-    void Function()? onRemove,
-    required int count}) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(
-        "Rooms",
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      Container(
-        height: 35,
-        width: 140,
-        decoration: BoxDecoration(
-          border: Border.all(width: 1, color: black),
-          borderRadius: BorderRadius.circular(7),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: InkWell(
-                onTap: onRemove,
-                child: Icon(
-                  Icons.remove,
-                  color: primary,
-                  size: 18,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Text(
-                count.toString(),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: onAdd,
-                child: Icon(
-                  Icons.add,
-                  color: primary,
-                  size: 18,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ],
-  );
 }
