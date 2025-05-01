@@ -1,5 +1,5 @@
 import '../repo/home_repo.dart';
-import '../entity/filter_entity.dart';
+import '../../../../core/entity/filter_entity.dart';
 
 class GetFilterationUsecase {
   final HomeRepo _homeRepo;

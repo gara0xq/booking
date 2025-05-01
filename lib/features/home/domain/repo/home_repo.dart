@@ -1,4 +1,4 @@
-import '../entity/filter_entity.dart';
+import '../../../../core/entity/filter_entity.dart';
 
 abstract class HomeRepo {
   void setPersonsChange(int adults, int children, int rooms);
@@ -7,4 +7,5 @@ abstract class HomeRepo {
   FilterEntity getFilteration();
   Future<List<String>> getSuggestions();
   void resetFilteration();
+  Future<List<Map<String, dynamic>>> getSuggestionCountries();
 }

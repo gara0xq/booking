@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 //getx
@@ -9,9 +10,9 @@ import 'package:popover/popover.dart';
 import 'package:standard_searchbar/old/standard_searchbar.dart';
 
 //files
-import '../../../../core/utils/colors.dart';
-import '../../domain/entity/filter_entity.dart';
-import 'counter_feild.dart';
+import '../utils/colors.dart';
+import '../entity/filter_entity.dart';
+import '../../features/home/presentation/widget/counter_feild.dart';
 
 enum InputType {
   search,
@@ -48,6 +49,7 @@ class _FilterInputFieldState extends State<FilterInputField> {
             suggestions: widget.suggestions,
             borderRadius: 7,
             onChanged: (e) => widget.setQuery!(e),
+            onSubmitted: (p0) => widget.setQuery!(p0),
             startIconColor: black,
           )
         : InkWell(
@@ -164,15 +166,18 @@ class _FilterInputFieldState extends State<FilterInputField> {
                           ? Icons.calendar_month
                           : Icons.person,
                       color: black),
-                  Text(
-                    widget.inputType == InputType.calender
-                        ? widget.filteration.checkInDate == null
-                            ? "Check in | Check out"
-                            : "${widget.filteration.checkInDate?.day}-${widget.filteration.checkInDate?.month}   |   ${widget.filteration.checkOutDate?.day}-${widget.filteration.checkOutDate?.month}"
-                        : "Adult ${widget.filteration.noOfAdults} | Children ${widget.filteration.noOfChildren}",
-                    style: TextStyle(
-                      color: black.withAlpha(122),
-                      fontSize: 14,
+                  Expanded(
+                    child: AutoSizeText(
+                      widget.inputType == InputType.calender
+                          ? widget.filteration.checkInDate == null
+                              ? "Check in | Check out"
+                              : "${widget.filteration.checkInDate?.day}-${widget.filteration.checkInDate?.month}   |   ${widget.filteration.checkOutDate?.day}-${widget.filteration.checkOutDate?.month}"
+                          : "Adult ${widget.filteration.noOfAdults} | Children ${widget.filteration.noOfChildren}",
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: black.withAlpha(122),
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                   Spacer(),

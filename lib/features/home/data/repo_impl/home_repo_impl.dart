@@ -1,7 +1,14 @@
-import '../../domain/entity/filter_entity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:main_app/features/home/data/source/get_suggestion_countries.dart';
+
+import '../../../../core/entity/filter_entity.dart';
 import '../../domain/repo/home_repo.dart';
 
 class HomeRepoImpl implements HomeRepo {
+  final GetSuggestionCountries _getSuggestionCountries;
+  HomeRepoImpl()
+      : _getSuggestionCountries =
+            GetSuggestionCountries(FirebaseFirestore.instance);
   static final FilterEntity filteration = FilterEntity(
     country: "",
     checkInDate: null,
@@ -61,5 +68,10 @@ class HomeRepoImpl implements HomeRepo {
     filteration.noOfAdults = 2;
     filteration.noOfChildren = 0;
     filteration.noOfRooms = 1;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getSuggestionCountries() async {
+    return await _getSuggestionCountries.getSuggestionCountries();
   }
 }

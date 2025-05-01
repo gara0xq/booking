@@ -1,16 +1,17 @@
-// getx
-import 'package:flutter/material.dart';
+// packages
+
 import 'package:get/get.dart';
 
 //files
 import '../../data/repo_impl/home_repo_impl.dart';
 import '../../domain/usecase/get_filteration_usecase.dart';
+import '../../domain/usecase/get_suggestion_countries_usecase.dart';
 import '../../domain/usecase/get_suggestions_usecase.dart';
 import '../../domain/usecase/reset_filteration_usecase.dart';
 import '../../domain/usecase/set_dates_usecase.dart';
 import '../../domain/usecase/set_persons_usecase.dart';
 import '../../domain/usecase/set_query_usecase.dart';
-import '../../domain/entity/filter_entity.dart';
+import '../../../../core/entity/filter_entity.dart';
 
 class HomeProvider extends GetxController {
   final GetFilterationUsecase _getFilterationUsecase;
@@ -19,6 +20,7 @@ class HomeProvider extends GetxController {
   final SetPersonsUsecase _setPersonsUsecase;
   final SetQueryUsecase _setQueryUsecase;
   final ResetFilterationUsecase _resetFilterationUsecase;
+  final GetSuggestionCountriesUsecase _getSuggestionCountriesUsecase;
 
   HomeProvider()
       : _getFilterationUsecase = GetFilterationUsecase(HomeRepoImpl()),
@@ -26,19 +28,24 @@ class HomeProvider extends GetxController {
         _setDatesUsecase = SetDatesUsecase(HomeRepoImpl()),
         _setPersonsUsecase = SetPersonsUsecase(HomeRepoImpl()),
         _resetFilterationUsecase = ResetFilterationUsecase(HomeRepoImpl()),
-        _setQueryUsecase = SetQueryUsecase(HomeRepoImpl());
+        _setQueryUsecase = SetQueryUsecase(HomeRepoImpl()),
+        _getSuggestionCountriesUsecase =
+            GetSuggestionCountriesUsecase(HomeRepoImpl());
 
   late FilterEntity filteration;
   List<String> suggestions = [];
+  List<Map<String, dynamic>> suggestionCountries = [];
 
-  final loading = ValueNotifier<bool>(false);
+  RxBool loading = true.obs;
 
   @override
   void onInit() async {
     resetFilteration();
     getFilteration();
-    await getSuggestions();
-    loading.value = true;
+    await Future.wait([
+      getSuggestions(),
+      getSuggestionCountries(),
+    ]);
     super.onInit();
   }
 
@@ -51,7 +58,9 @@ class HomeProvider extends GetxController {
   }
 
   Future<void> getSuggestions() async {
-    suggestions = await _getSuggestionsUsecase.call();
+    await _getSuggestionsUsecase.call().then((e) {
+      suggestions = e;
+    });
   }
 
   void setPersonsChange(int adults, int children, int rooms) {
@@ -64,7 +73,7 @@ class HomeProvider extends GetxController {
     if (dates.length == 2) {
       _setDatesUsecase.call(dates);
       getFilteration();
-      Get.back();
+      // Get.back();
     }
     update();
   }
@@ -73,5 +82,14 @@ class HomeProvider extends GetxController {
     _setQueryUsecase.call(query);
     getFilteration();
     update();
+  }
+
+  changeLang() {}
+
+  Future<void> getSuggestionCountries() async {
+    await _getSuggestionCountriesUsecase.call().then((e) {
+      loading.value = false;
+      suggestionCountries = e;
+    });
   }
 }
